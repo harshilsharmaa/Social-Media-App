@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import User from '../User/User'
-import { getUserProfile, getUserPosts, followUser, loadUser } from '../../Actions/User'
+import { getUserProfile, getUserPosts, followUser } from '../../Actions/User'
 import { useDispatch, useSelector } from 'react-redux'
 import { Typography, Avatar, Button, Dialog } from '@mui/material'
 import Loader from '../Loader/Loader'
@@ -11,7 +11,7 @@ import { useAlert } from 'react-alert'
 
 
 const UserProfile = () => {
-    "use strict";
+
     const dispatch = useDispatch()
     const alert = useAlert();
 
@@ -24,7 +24,7 @@ const UserProfile = () => {
 
     const { loading, error, posts } = useSelector((state) => state.userPosts);
 
-    const { error: likeError, message, loading: deleteLoading } = useSelector(state => state.like);
+    const { error: likeError, message, } = useSelector(state => state.like);
 
     const { error: followUserError, message:followUserMessage, loading: followLoading } = useSelector(state => state.followUser);
 
@@ -60,8 +60,8 @@ const UserProfile = () => {
         }
 
         if(user){
-            user.followers.map((follow) => {
-                if(follow._id===me._id){
+            user.followers.forEach((item) => {
+                if(item._id===me._id){
                     setFollowing(true);
                 }
             })
@@ -69,12 +69,16 @@ const UserProfile = () => {
         else{
             setFollowing(false);
         }
-    }, [user, me._id])
+    }, [user, me._id, params.id])
     
 
     useEffect(() => {
         if (error) {
             alert.error(error);
+            dispatch({ type: "clearError" })
+        }
+        if (likeError) {
+            alert.error(likeError);
             dispatch({ type: "clearError" })
         }
         if (followUserError) {
@@ -90,7 +94,7 @@ const UserProfile = () => {
             alert.success(followUserMessage);
             dispatch({ type: "clearMessage" })
         }
-    }, [alert, dispatch, followUserError, followUserMessage])
+    }, [alert, dispatch, followUserError, followUserMessage, error, message, likeError])
 
     return (
         loading || userLoading === true ? <Loader /> :

@@ -16,7 +16,7 @@ const Home = () => {
     (state) => state.postOfFollowing
   );
 
-  const {users, loading:usersLoading} = useSelector(
+  const {users} = useSelector(
     (state) => state.allUsers
   );
 
